@@ -12,6 +12,8 @@ module.exports = class IndexDbController extends EventEmitter {
   }
 
   // Opens the database connection and returns a promise
+  // if no state then sets an initial "state"
+  // returns persisted data/state
   open () {
     return this.get('dataStore')
     .then((data) => {

@@ -9,16 +9,6 @@ const idb = new IDB({
   key: 'TEST',
   version: 2,
 })
-idb.once('opened', (data) => {
-  // idb.put({test: data.test++})
-  idb.get()
-  .then((data) => {
-    console.log('non issue@1?', data)
-    return Promise.resolve(data)
-  })
-  .catch((err) => console.error('PUT 3', err))
-
-})
 let counter = 0
 idb.initialState = {test: counter}
 idb.open()
