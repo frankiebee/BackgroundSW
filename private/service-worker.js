@@ -1,6 +1,43 @@
 const EventEmitter = require('events')
 var id = Math.random()
+const SwStream = require('sw-stream/lib/sw-stream.js')
+const SwGlobalListener = require('sw-stream/lib/sw-global-listener.js')
+
+const connectionListener = new SwGlobalListener(self)
+const IDB = require('../level-db')
+const idb = new IDB({
+  key: 'TEST',
+  version: 2,
+})
+let counter = 0
+idb.initialState = {test: counter}
+idb.open()
+.then((data) => {
+  console.log(data)
+})
+.catch(console.error)
+
+self.addEventListener('message', function (messageEvent) {
+  if (messageEvent.data === 'get'){
+    return idb.get()
+    .then((data) => {
+      console.log('non issue@get?', data)
+    })
+    .catch(console.error)
+  } else if (messageEvent.data === 'put') {
+      counter += 1
+      return idb.put({test: counter}).then((data) => console.log('non issue@put?', data))
+      .catch(console.error)
+    }
+
+})
+
+
 sendMessageToAllClients('The service worker just started up.')
+
+connectionListener.on('remote', (portStream, messageEvent) => {
+    console.log('REMOTE CONECTION FOUND***********')
+  })
 
 self.addEventListener('activate', function(event) {
   console.log(id, 'activate')
